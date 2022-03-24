@@ -130,20 +130,26 @@ class _RandomWordsState extends State<RandomWords> {
         pair.asPascalCase,
         style: _biggerFont,
       ),
-      trailing: Icon(     // NEW from here...
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
+      trailing: IconButton(
+        icon: (alreadySaved? Icon(Icons.favorite) : Icon(Icons.favorite_border)),
         color: alreadySaved ? Colors.red : null,
-        semanticLabel: alreadySaved ? 'Remove from saved' : 'Save',
-      ),
-      onTap: () {      // NEW lines from here...
-        setState(() {
+        tooltip: 'Save',
+        onPressed: () => setState(() {
           if (alreadySaved) {
             _saved.remove(pair);
-          } else {
+          }
+          else {
             _saved.add(pair);
           }
+        }
+        )
+    ),
+        onLongPress: (){
+        setState(() {
+          _saved.remove(pair);
+          _suggestions.remove(pair);
         });
-      },               // ... to here.
+        }
     );
   }
 }
