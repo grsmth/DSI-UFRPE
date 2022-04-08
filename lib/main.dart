@@ -63,10 +63,10 @@ class _WordEditorState extends State<WordEditor> {
                    ElevatedButton(
                        child: Text('Done'),
                        onPressed:(){
-                         Navigator.pop(context);
                          setState(() {
                            editwords.setFirstWord(mycontroller1.text);
                            editwords.setSecondWord(mycontroller2.text);
+                           Navigator.of(context).pop(editwords);
                          });
 
                        } )
@@ -92,11 +92,17 @@ class _RandomWordsState extends State<RandomWords> {
   final _biggerFont = const TextStyle(fontSize: 18); // NEW
   bool isGrid = true;
 
-  _goEdit(WordPair pair){
+  _createNew(BuildContext context) async{
+    final WordPair temporary = new WordPair('New', 'Pair');
+    dynamic newpair = await Navigator.pushNamed(context, '/Screen2', arguments: temporary);
+    pairRepository.addNew(newpair);
+  }
+
+  _goEdit(WordPair pair ,BuildContext context) async{
     final WordPair edited = pair;
-    Navigator.pushNamed(context, '/Screen2', arguments: edited);
+    dynamic newpair = await Navigator.pushNamed(context, '/Screen2', arguments: edited);
     setState(() {
-      pair = edited;
+      pair = newpair;
     });
   }
   void _pushSaved() {
@@ -154,6 +160,13 @@ class _RandomWordsState extends State<RandomWords> {
         ],
       ),
       body: _buildSuggestions(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _createNew(context);
+        },
+        backgroundColor: Colors.deepOrangeAccent,
+        child: const Icon(Icons.add ),
+      ),
     );
   }
   Widget _buildSuggestions() => isGrid
@@ -204,7 +217,7 @@ class _RandomWordsState extends State<RandomWords> {
           pairRepository.removepair(pair);
         });
       },
-      onTap: (){ _goEdit(pair);
+      onTap: (){ _goEdit(pair,context);
       },
     );
   }
